@@ -56,7 +56,10 @@ Um die Anmeldeinformationen von {scca} zu erhalten, befolgen Sie diese Schritte:
 [#pr-deployment-installing-and-running]
 === Installation und Ausführung von {productnameshort} mit {helm}
 Das folgende Verfahren beschreibt, wie man {productnameshort} mit {helm} installiert.
-Ersetzen Sie `<RELEASE_NAME>` durch Ihren benutzerdefinierten Release-Namen für die Implementierung des {helm} Charts. Ersetzen Sie `<APP_VERSION>` durch die gewünschte Anwendungsversion (z. B. `1.2`).
+Vor dem Start ersetzen Sie die folgenden Platzhalter:
+
+* `<RELEASE_NAME>` durch Ihren benutzerdefinierten Release-Namen für die Implementierung des {helm} Charts.
+* `<APP_VERSION>` durch die gewünschte Anwendungsversion (z. B. `1.2`).
 
 . Melden Sie sich bei {sregistry} mit den erhaltenen {scca} Spiegelungsanmeldeinformationen an.
 +
