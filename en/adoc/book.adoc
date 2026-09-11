@@ -47,6 +47,9 @@ include::ha-setup.adoc[]
 
 include::configure-rancher-oidc.adoc[]
 
+// Migration from upstream Harbor
+include::migrating-from-upstream-harbor.adoc[]
+
 //FAQ
 include::faq.adoc[]
 
