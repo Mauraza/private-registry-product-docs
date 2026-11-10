@@ -885,15 +885,19 @@ The query should return populated series in the selected recent time range.
 Public and private projects produce separate series; do not interpret each series as the total across all project types.
 
 [#pr-observability-dashboard]
-=== Using the {productname} metrics dashboard
+=== Installing the {productname} metrics dashboard
 
-Open the saved *SPR Registry Overview* dashboard, or select it under *Dashboards*.
-It is starred and private to the user who created it; sign in with that account to view it.
-Dashboard creation does not enable public access or change the {helm} releases.
+The {productname} observability dashboard is installed as a StackPack from the {sobservability} StackPacks page.
+A StackPack is a bundled integration that includes the dashboard, monitoring configuration, and setup documentation.
 
-The reusable definition is `spr-dashboard.yaml`.
-It uses the native {sobservability} dashboard format, not a {kube} manifest or {helm} values file.
-All queries are scoped to `namespace="suse-registry"`.
+.Install the StackPack
+. In the {sobservability} web interface, navigate to *StackPacks*.
+. Search for *SUSE Private Registry* or browse the Kubernetes category.
+. Select the *SUSE Private Registry* StackPack and choose *Install*.
+. Follow the configuration steps shown in the StackPack's *Configuration* tab.
+
+After installation completes, the *SUSE Private Registry - Operations* dashboard becomes available under *Dashboards*.
+Use the *Cluster* and *Namespace* variables to filter the dashboard's queries to the selected {kube} cluster and {productname} namespace.
 
 [#tab-observability-dashboard-panels]
 [cols="1,2",options="header"]
@@ -901,7 +905,7 @@ All queries are scoped to `namespace="suse-registry"`.
 |Panel |Meaning
 
 |Registry Health
-|Minimum {harbor} health: 1 is healthy, 0 is unhealthy; missing data is not healthy.
+|Minimum {harbor} health: 1 is healthy; 0 or missing data is unhealthy.
 
 |Projects
 |Public and private project counts combined.
@@ -912,60 +916,24 @@ All queries are scoped to `namespace="suse-registry"`.
 |Stored Artifacts
 |Artifact count across projects and artifact types.
 
-|Storage Usage (MiB)
-|Project quota usage in MiB, not free disk space on the registry volume.
+|Storage Usage by Project
+|Project quota usage, not free disk space on the registry storage backend. Units scale automatically.
 
 |Artifact Pulls by Project
-|Exporter-reported pull gauge, not a requests-per-second rate.
+|Pulls per chart interval, derived from the exporter's cumulative pull count.
 
 |Projects by Visibility
-|Project counts split by the `public` label; `true` is public.
+|Public and private project counts.
 
 |Pending Jobs
 |Sum of queued jobs across job types; zero is a valid result.
 |===
 
 [#fig-observability-spr-dashboard]
-.SPR Registry Overview with eight populated Harbor metric panels
-image::observability-spr-dashboard.png[SPR Registry Overview with eight populated Harbor metric panels,width=100%]
+.SUSE Private Registry - Operations dashboard with eight populated Harbor metric panels
+image::observability-spr-dashboard.png[SUSE Private Registry - Operations dashboard with eight populated Harbor metric panels,width=100%]
 
-When reloaded, the saved dashboard should show data in all eight panels.
-
-[#pr-observability-import-dashboard]
-.Recreating the dashboard on another {sobservability} installation
-The following steps use a temporary private dashboard named `SPR Dashboard Import Walkthrough` for illustration; the working `SPR Registry Overview` dashboard is unaffected.
-Choose your own dashboard name when following these steps.
-The screenshots show example metric values, not fixed expected values.
-
-. Verify that {harbor} metrics are ingested using xref:pr-observability-harbor-metrics[].
-. Select *Dashboards*, *Add new dashboard*, enter `SPR Registry Overview`, optionally star it, and select *Create dashboard*. Leave *Make it public* disabled unless sharing is intended.
-+
-[#fig-observability-dashboard-import-create]
-.Creating a private dashboard using the Add New Dashboard form
-image::spr-dashboard-import-01-create.png[Creating a private dashboard using the Add New Dashboard form,width=100%]
-. Open *Show more actions*, *Edit dashboard YAML*, and replace the editor contents with the full contents shown in xref:pr-observability-spr-dashboard-yaml[].
-+
-[#fig-observability-dashboard-import-menu]
-.Opening Edit dashboard YAML from the dashboard actions menu
-image::spr-dashboard-import-02-menu.png[Opening Edit dashboard YAML from the dashboard actions menu,width=100%]
-+
-Wait for the paste to finish, and confirm that `spec.panels` contains the panel definitions rather than the empty template `panels: {}` before continuing.
-+
-[#fig-observability-dashboard-import-yaml]
-.Dashboard YAML editor populated with the SPR panel definitions
-image::spr-dashboard-import-03-yaml.png[Dashboard YAML editor populated with the SPR panel definitions,width=100%]
-. Select *Update dashboard definition*, then *Save dashboard*. Updating the YAML alone does not persist the change; the asterisk beside the dashboard name indicates unsaved changes.
-+
-[#fig-observability-dashboard-import-save]
-.Saving the dashboard after applying the imported YAML definition
-image::spr-dashboard-import-04-save.png[Saving the dashboard after applying the imported YAML definition,width=100%]
-. Reload the page and check the values and charts over a recent time range. Adjust the namespace selector for a registry installed elsewhere. All eight panels should populate; investigate missing data rather than treating it as zero.
-+
-[#fig-observability-dashboard-import-verify]
-.Saved and reloaded imported SPR dashboard with populated metric panels
-image::spr-dashboard-import-05-verify.png[Saved and reloaded imported SPR dashboard with populated metric panels,width=100%]
-
-The dashboard URL is installation-specific; a recreated dashboard receives a new ID.
+The dashboard displays data automatically once the StackPack installation completes and {harbor} metrics are being collected.
 
 [NOTE]
 ====

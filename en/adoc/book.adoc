@@ -54,7 +54,6 @@ include::backup-restore-velero.adoc[]
 
 // Observability integration
 include::observability-integration.adoc[]
-include::observability-spr-dashboard-yaml.adoc[]
 
 //FAQ
 include::faq.adoc[]

@@ -21,8 +21,11 @@ spec:
             format: {}
             sparkline: false
             thresholds:
-              defaultColor: "#33A02C"
-              steps: []
+              defaultColor: "#E31A1C"
+              mode: absolute
+              steps:
+                - color: "#33A02C"
+                  value: 1
         links: []
         queries:
           - kind: TimeSeriesQuery
@@ -30,10 +33,11 @@ spec:
               plugin:
                 kind: PrometheusTimeSeriesQuery
                 spec:
-                  query: min(harbor_health{namespace="suse-registry"})
+                  query: min(harbor_health{k8s_cluster_name="${cluster}", k8s_namespace_name="${namespace}"}) or vector(0)
+                  alias: " "
         display:
           name: Registry Health
-          description: "1 = healthy; 0 = unhealthy. Missing data is not healthy."
+          description: "1 = healthy; 0 = unhealthy or no data."
     qJzTSNXd5mgiFP59Wz0-r:
       spec:
         plugin:
@@ -52,7 +56,8 @@ spec:
               plugin:
                 kind: PrometheusTimeSeriesQuery
                 spec:
-                  query: sum(harbor_project_total{namespace="suse-registry"})
+                  query: sum(max by (public) (harbor_project_total{k8s_cluster_name="${cluster}", k8s_namespace_name="${namespace}"}))
+                  alias: " "
         display:
           name: Projects
           description: Public and private projects combined.
@@ -74,7 +79,8 @@ spec:
               plugin:
                 kind: PrometheusTimeSeriesQuery
                 spec:
-                  query: sum(harbor_project_repo_total{namespace="suse-registry"})
+                  query: sum(max by (project_name) (harbor_project_repo_total{k8s_cluster_name="${cluster}", k8s_namespace_name="${namespace}"}))
+                  alias: " "
         display:
           name: Repositories
           description: Repositories across all projects.
@@ -96,7 +102,8 @@ spec:
               plugin:
                 kind: PrometheusTimeSeriesQuery
                 spec:
-                  query: sum(harbor_project_artifact_total{namespace="suse-registry"})
+                  query: sum(max by (project_name, artifact_type) (harbor_project_artifact_total{k8s_cluster_name="${cluster}", k8s_namespace_name="${namespace}"}))
+                  alias: " "
         display:
           name: Stored Artifacts
           description: Artifacts across all projects and artifact types.
@@ -107,8 +114,8 @@ spec:
           spec:
             yAxis:
               show: true
-              label: MiB
-              format: {}
+              format:
+                unit: bytes(IEC)
             legend:
               show: true
               position: bottom
@@ -126,10 +133,11 @@ spec:
               plugin:
                 kind: PrometheusTimeSeriesQuery
                 spec:
-                  query: sum by (project_name) (harbor_project_quota_usage_byte{namespace="suse-registry"}) / 1024 / 1024
+                  query: max by (project_name) (harbor_project_quota_usage_byte{k8s_cluster_name="${cluster}", k8s_namespace_name="${namespace}"})
+                  alias: ${project_name}
         display:
-          name: Storage Usage (MiB)
-          description: Project quota usage, not free space on the registry volume.
+          name: Storage Usage by Project
+          description: Project quota usage, not free space on the registry storage backend.
     9KumJhys1d6wR6RJPMk60:
       spec:
         plugin:
@@ -138,7 +146,8 @@ spec:
             yAxis:
               show: true
               label: Pulls
-              format: {}
+              format:
+                decimalPlaces: 0
             legend:
               show: true
               position: bottom
@@ -156,10 +165,11 @@ spec:
               plugin:
                 kind: PrometheusTimeSeriesQuery
                 spec:
-                  query: sum by (project_name) (harbor_artifact_pulled{namespace="suse-registry"})
+                  query: max by (project_name) (delta(harbor_artifact_pulled{k8s_cluster_name="${cluster}", k8s_namespace_name="${namespace}"}[${__interval}]))
+                  alias: ${project_name}
         display:
           name: Artifact Pulls by Project
-          description: Exporter-reported gauge; not a requests-per-second rate.
+          description: Pulls per chart interval, derived from the exporter's cumulative pull count.
     eJlNjoiGN9YK6WrQQ3P5D:
       spec:
         plugin:
@@ -168,7 +178,8 @@ spec:
             yAxis:
               show: true
               label: Projects
-              format: {}
+              format:
+                decimalPlaces: 0
             legend:
               show: true
               position: bottom
@@ -186,10 +197,11 @@ spec:
               plugin:
                 kind: PrometheusTimeSeriesQuery
                 spec:
-                  query: sum by (public) (harbor_project_total{namespace="suse-registry"})
+                  query: label_replace(label_replace(max by (public) (harbor_project_total{k8s_cluster_name="${cluster}", k8s_namespace_name="${namespace}"}), "visibility", "Public", "public", "true"), "visibility", "Private", "public", "false")
+                  alias: ${visibility}
         display:
           name: Projects by Visibility
-          description: Public and private project counts; public=true is public.
+          description: Public and private project counts.
     oUzIMUMfQNw1giOsd2cLE:
       spec:
         plugin:
@@ -208,7 +220,8 @@ spec:
               plugin:
                 kind: PrometheusTimeSeriesQuery
                 spec:
-                  query: sum(harbor_task_queue_size{namespace="suse-registry"})
+                  query: sum(max by (type) (harbor_task_queue_size{k8s_cluster_name="${cluster}", k8s_namespace_name="${namespace}"}))
+                  alias: " "
         display:
           name: Pending Jobs
           description: Queued jobs across all job types; zero is a valid result.
@@ -264,5 +277,39 @@ spec:
             height: 2
             content:
               $ref: "#/spec/panels/oUzIMUMfQNw1giOsd2cLE"
-  variables: []
+  variables:
+    - perseslistvariable:
+        kind: ListVariable
+        spec:
+          name: cluster
+          display:
+            name: Cluster
+            description: ""
+          allowAllValue: false
+          allowMultiple: false
+          sort: alphabetical-asc
+          plugin:
+            kind: MetricLabelValues
+            spec:
+              labelName: k8s_cluster_name
+              matchers:
+                - harbor_health
+      persestextvariable: null
+    - perseslistvariable:
+        kind: ListVariable
+        spec:
+          name: namespace
+          display:
+            name: Namespace
+            description: ""
+          allowAllValue: false
+          allowMultiple: false
+          sort: alphabetical-asc
+          plugin:
+            kind: MetricLabelValues
+            spec:
+              labelName: k8s_namespace_name
+              matchers:
+                - harbor_health{k8s_cluster_name="${cluster}"}
+      persestextvariable: null
 ----
