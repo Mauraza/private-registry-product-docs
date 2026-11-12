@@ -14,7 +14,7 @@ This document provides a high-level overview of the features, capabilities and l
 
 *Security updates:*
 
-* Updates {harbor} 2.15.2 to 2.15.4 and includes the security fixes in link:https://github.com/goharbor/harbor/releases#release-v2.15.3[Release Notes v2.15.3] and link:https://github.com/goharbor/harbor/releases#release-v2.15.4[Release Notes v2.15.4].
+* Updates {harbor} 2.15.2 to 2.15.4 and includes the security fixes in link:https://github.com/goharbor/harbor/releases/tag/v2.15.3[Release Notes v2.15.3] and link:https://github.com/goharbor/harbor/releases/tag/v2.15.4[Release Notes v2.15.4].
 
 *Component updates:*
 
@@ -30,7 +30,7 @@ This document provides a high-level overview of the features, capabilities and l
 * Prevents garbage collection from counting missing blobs as freed storage.
 * Limits manifest uploads and audit log payloads.
 * Converts timestamp and revision fields to 64-bit integers to prevent year 2038 overflow.
-* Fixes Harbor security issues involving path traversal, privilege escalation, immutable-tag policy bypasses, and server-side request forgery.
+* Fixes {harbor} security issues involving path traversal, privilege escalation, immutable-tag policy bypasses and server-side request forgery.
 
 *Container image updates:*
 
