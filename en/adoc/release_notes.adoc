@@ -10,6 +10,63 @@ It is designed for {suse} customers who need a container registry that works wel
 This document provides a high-level overview of the features, capabilities and limitations of {productname}, and highlights important product updates.
 
 
+[#pr-relnotes-130]
+=== Release 1.3.0
+
+*Security updates:*
+
+* Hardens robot account credential checks and proxy cache repository-filter validation.
+* Adds webhook egress policies and allowlists to control outgoing webhook requests.
+* Updates Go and front-end dependencies to address known vulnerabilities.
+
+*Component updates:*
+
+* Updates {harbor} from 2.15.2 to 2.16.0 (link:https://github.com/goharbor/harbor/releases/tag/v2.16.0[Release Notes v2.16.0]).
+* Updates the {trivy} adapter to version 0.40.0 (link:https://github.com/goharbor/harbor-scanner-trivy/releases/tag/v0.40.0[release notes]).
+  Upstream {harbor} 2.16.0 uses {trivy} 0.76.1; {productname} obtains {trivy} from {suse} packages.
+* Updates the registry source tag to `v2.8.3-harbor.3` of the distribution project (link:https://github.com/goharbor/distribution/releases/tag/v2.8.3-harbor.3[release notes]).
+* Enables multi-architecture support for amd64 and arm64.
+* Updates Go to version 1.26.3.
+
+*New features and performance:*
+
+* Adds custom project roles.
+* Adds advanced proxy cache configuration, repository filters, registry referrer support and retention settings during project creation.
+* Separates event-triggered replication into dedicated policies.
+* Aggregates task execution errors and displays failure details.
+
+*Enhancements:*
+
+* Adds audit events for creating, updating and deleting project members, including users and groups (link:https://github.com/goharbor/harbor/pull/23228[upstream change]).
+* Adds metrics to monitor proxy cache hits and misses: `http_registry_proxy_requests_total` and `http_registry_proxy_upstream_requests_total`.
+* Supports chunked blob uploads for replication to Azure Container Registry when you enable the copy-by-chunk option.
+* Preserves registry URL path prefixes during authentication discovery.
+* Updates the last pull time when a proxy cache creates an artifact and when a child artifact is pulled.
+* Supports proxy settings for the registry component.
+* Improves event-triggered replication by filtering enabled policies in the database query.
+* Improves internal HTTP connection reuse to reduce connection churn under high concurrency.
+* Returns HTTP 404 when an artifact listing request references a repository that does not exist.
+
+*Key fixes:*
+
+* Inherits signatures from Open Container Initiative (OCI) index artifacts to child artifacts.
+* Improves replication filter handling and garbage-collection performance.
+
+*Container image updates:*
+
+* private-registry/1.2/harbor-core:1.2.2 ➡ private-registry/1.3/harbor-core:1.3.0
+* private-registry/1.2/harbor-exporter:1.2.2 ➡ private-registry/1.3/harbor-exporter:1.3.0
+* private-registry/1.2/harbor-jobservice:1.2.2 ➡ private-registry/1.3/harbor-jobservice:1.3.0
+* private-registry/1.2/harbor-portal:1.2.2 ➡ private-registry/1.3/harbor-portal:1.3.0
+* private-registry/1.2/harbor-registry:1.2.2 ➡ private-registry/1.3/harbor-registry:1.3.0
+* private-registry/1.2/harbor-registryctl:1.2.2 ➡ private-registry/1.3/harbor-registryctl:1.3.0
+* private-registry/1.2/harbor-trivy-adapter:1.2.2 ➡ private-registry/1.3/harbor-trivy-adapter:1.3.0
+* suse/postgres:17.11 ➡ suse/postgres:17.10
+
+*Upgrade notes:*
+
+* No breaking changes in this release.
+
 [#pr-relnotes-121]
 === Release 1.2.1
 
