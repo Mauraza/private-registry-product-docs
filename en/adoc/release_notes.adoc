@@ -24,7 +24,6 @@ This document provides a high-level overview of the features, capabilities and l
 * Updates the {trivy} adapter to version 0.40.0 (link:https://github.com/goharbor/harbor-scanner-trivy/releases/tag/v0.40.0[release notes]).
   Upstream {harbor} 2.16.0 uses {trivy} 0.76.1; {productname} obtains {trivy} from {suse} packages.
 * Updates the registry source tag to `v2.8.3-harbor.3` of the distribution project (link:https://github.com/goharbor/distribution/releases/tag/v2.8.3-harbor.3[release notes]).
-* Enables multi-architecture support for amd64 and arm64.
 * Updates Go to version 1.26.3.
 
 *New features and performance:*
