@@ -2,7 +2,6 @@
 :experimental:
 :docinfo:
 :toc: left
-:revdate: 2026-11-24
 
 include::../common/generic-attributes.adoc[]
 

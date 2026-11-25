@@ -257,7 +257,7 @@ If you back up with CSI snapshots, replace `--default-volumes-to-fs-backup` with
 [#pr-velero-restore]
 === Restoring {productnameshort}
 
-If Fleet manages the deployment, read <<pr-velero-restore-fleet>> before restoring.
+If Fleet manages the deployment, read xref:pr-velero-restore-fleet[] before restoring.
 The {productnameshort} namespace backup does not restore the Fleet management configuration.
 
 [IMPORTANT]
@@ -390,14 +390,14 @@ Before connecting or targeting the recovery cluster, set `paused: true` in the b
 Confirm that Fleet has applied the pause and that no deployment is in progress.
 Pausing the bundle also affects its other target clusters.
 Then connect the recovery cluster to Fleet.
-See the https://fleet.rancher.io/reference/ref-fleet-yaml[Fleet configuration reference].
+See the link:https://documentation.suse.com/cloudnative/continuous-delivery/latest/en/reference/ref-fleet-yaml.html[Fleet configuration reference].
 . Confirm that the target namespace contains no {productnameshort} release, PVCs or chart-generated secrets.
 Do not install the chart through Fleet or {helm} before the restore.
 Velero normally skips resources that already exist, including PVCs.
 . Provision the required {ingress}, storage classes and Velero components on the target cluster.
 Configure Velero with the backup storage location and verify that the backup is available:
 +
-[source,bash,subs="+attributes"]
+[source,console,subs="+attributes"]
 ----
 {prompt_user}velero backup get <BACKUP_NAME>
 ----
@@ -405,7 +405,7 @@ Configure Velero with the backup storage location and verify that the backup is 
 If you use an external {postgresql} database or external object storage, restore them with their provider procedures before starting the registry.
 . Restore the namespace backup:
 +
-[source,bash,subs="+attributes"]
+[source,console,subs="+attributes"]
 ----
 {prompt_user}velero restore create <RESTORE_NAME> \
   --from-backup <BACKUP_NAME> \
@@ -424,12 +424,12 @@ Do not replace the chart-generated secrets with newly generated secrets.
 ====
 If the chart is hosted on an authenticated OCI registry, such as `registry.suse.com`, also restore the `helmSecretName` credential that the `GitRepo` uses to pull the chart.
 This credential is separate from the {productnameshort} image-pull secret.
-See <<pr-install-rancher-repository>> for the equivalent credential used when installing through the {ranchera} UI.
+See xref:pr-install-rancher-repository[] for the equivalent credential used when installing through the {ranchera} UI.
 ====
 . Resume the Fleet bundle and verify that its target deployment reaches the `Ready` state.
 Check the GitRepo and bundle status in the Fleet workspace:
 +
-[source,bash,subs="+attributes"]
+[source,console,subs="+attributes"]
 ----
 {prompt_user}kubectl -n <FLEET_WORKSPACE_NAMESPACE> describe gitrepo <GITREPO_NAME>
 {prompt_user}kubectl -n <FLEET_WORKSPACE_NAMESPACE> describe bundle <BUNDLE_NAME>
@@ -438,7 +438,7 @@ Check the GitRepo and bundle status in the Fleet workspace:
 Confirm that the bundle targets the recovery cluster and reports the deployment as `Ready`.
 If Fleet reports an ownership conflict or does not manage the restored release, investigate the Fleet status before making further changes.
 Do not force ownership or reinstall the chart as a recovery shortcut.
-. Perform the checks in <<pr-velero-verification>>.
+. Perform the checks in xref:pr-velero-verification[].
 In a test environment, also confirm that a subsequent Fleet configuration change reaches the recovered deployment.
 
 [NOTE]
@@ -447,7 +447,7 @@ For existing PVCs, an in-place restore is available only with supported Velero v
 The documented CSI snapshot method without data movement does not support this option.
 Pause Fleet, stop access to the target volumes and back them up before an in-place restore.
 File System Backup requires additional workload preparation and restored pods; restoring PVC objects alone does not restore their data.
-See the https://velero.io/docs/latest/volume-data-inplace-restore/[Velero in-place restore documentation] for the latest stable version.
+See the link:https://velero.io/docs/latest/volume-data-inplace-restore/[Velero in-place restore documentation] for the latest stable version.
 Select the documentation for your Velero version before using this method.
 ====
 
