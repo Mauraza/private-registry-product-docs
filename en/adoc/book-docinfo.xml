@@ -2,16 +2,18 @@
 <revhistory xml:id="rh-article-private-registry">
   <revision><date>2026-11-24</date>
     <revdescription>
-      <para>
-        Updated the Rancher installation instructions to use a versioned OCI repository URL
-      </para>
-    </revdescription>
-  </revision>
-  <revision><date>2026-11-24</date>
-    <revdescription>
-      <para>
-        Added recovery guidance for Fleet-managed deployments
-      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            Updated the Rancher installation instructions to use a versioned OCI repository URL
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Added recovery guidance for Fleet-managed deployments
+          </para>
+        </listitem>
+      </itemizedlist>
     </revdescription>
   </revision>
   <revision><date>2026-11-16</date>
