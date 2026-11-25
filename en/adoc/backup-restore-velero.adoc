@@ -341,7 +341,9 @@ Otherwise, update the saved values file and upgrade the release with that file:
   --version <CHART_VERSION> \
   -f <VALUES_FILE>.yaml
 ----
-. Disable *Repository Read Only*.
+If {ranchera} provides OIDC, update the `redirectURIs` entry in the `OIDCClient` resource.
+See xref:pr-configure-rancher-oidc-create-client[].
+. Perform the checks in xref:pr-velero-verification[].
 
 [NOTE]
 ====
@@ -373,7 +375,7 @@ Use this procedure when your database and object storage are managed outside of 
 ----
 . Verify that the connection secret of the external database and the TLS CA or OIDC credentials were restored, and recreate only the ones that are managed outside the namespace.
 . Start the registry and verify that it connects to the restored database.
-. Disable *Repository Read Only*.
+. Perform the checks in xref:pr-velero-verification[].
 
 [#pr-velero-restore-fleet]
 ==== Restoring a Fleet-managed deployment
@@ -418,15 +420,20 @@ Investigate warnings about existing resources and resolve restore errors before 
 . Configure the Fleet bundle to use the recovered release name, namespace, chart version and values.
 Restore external values and secrets that Fleet requires.
 If the address changes, update `externalURL` and the {ingress} host in the Fleet configuration.
+If {ranchera} provides OIDC, update the `redirectURIs` entry in the `OIDCClient` resource.
+See xref:pr-configure-rancher-oidc-create-client[].
 Do not replace the chart-generated secrets with newly generated secrets.
 +
 [NOTE]
 ====
 If the chart is hosted on an authenticated OCI registry, such as `registry.suse.com`, also restore the `helmSecretName` credential that the `GitRepo` uses to pull the chart.
 This credential is separate from the {productnameshort} image-pull secret.
+Create or restore the credential in the namespace of the `GitRepo`, not only in the {productnameshort} namespace.
 See xref:pr-install-rancher-repository[] for the equivalent credential used when installing through the {ranchera} UI.
 ====
-. Resume the Fleet bundle and verify that its target deployment reaches the `Ready` state.
+. Remove `paused: true` or set `paused: false` in the `fleet.yaml` configuration.
+Commit and push the change to the Fleet Git source.
+Wait for Fleet to reconcile the bundle and verify that its target deployment reaches the `Ready` state.
 Check the GitRepo and bundle status in the Fleet workspace:
 +
 [source,console,subs="+attributes"]
